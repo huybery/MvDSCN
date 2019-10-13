@@ -31,7 +31,7 @@ As different views share the same label space, the self-representation matrices 
 *  Test by Released Result:
 
 ```python
-python main.py \-\-test
+python main.py --test
 ```
 
 *  Train Network with Finetune.
@@ -39,7 +39,7 @@ python main.py \-\-test
 We have released the pretrain model in `/pretrain` folder, you can train it with finetune: 
 
 ```python
-python main.py \-\-ft
+python main.py --ft
 ```
 
 * Pretrain Auoencoder From Scratch:
