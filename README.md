@@ -1,6 +1,9 @@
 # MvDSCN
 :game_die: Tensorflow Repo for "Multi-view Deep Subspace Clustering Networks"
 
+
+[[Paper]](https://arxiv.org/abs/1908.01978) (submitted to **TIP 2019**)
+
 # Overview
 
 In this work, we propose a novel multi-view deep subspace clustering network (MvDSCN) by learning a multi-view self-representation matrix in an end to end manner. 
@@ -13,8 +16,6 @@ As different views share the same label space, the self-representation matrices 
 
 
 ![MvDSCN](/assets/Architecture.jpg)
-
-[[Paper]](https://arxiv.org/abs/1908.01978) (submitted to TIP 2019)
 
 
 # Requirements
@@ -30,7 +31,7 @@ As different views share the same label space, the self-representation matrices 
 *  Test by Released Result:
 
 ```python
-python main.py --test
+python main.py \-\-test
 ```
 
 *  Train Network with Finetune.
@@ -38,7 +39,7 @@ python main.py --test
 We have released the pretrain model in `/pretrain` folder, you can train it with finetune: 
 
 ```python
-python main.py --ft
+python main.py \-\-ft
 ```
 
 * Pretrain Auoencoder From Scratch:
