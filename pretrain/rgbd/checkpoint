@@ -1,0 +1,2 @@
+model_checkpoint_path: "ae_fusion"
+all_model_checkpoint_paths: "ae_fusion"
