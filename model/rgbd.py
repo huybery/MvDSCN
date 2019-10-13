@@ -22,13 +22,15 @@ class MTV:
         self.lr = tf.placeholder(tf.float32, [], name='lr')
 
         # encoder
+        # latent is the output of Unet encoder
         latent1 = self.encoder1(self.view1)
         latent2 = self.encoder2(self.view2)
 
+        # lantent_single means output of Dnet encoder
         latent1_single = self.encoder1_single(self.view1)
         latent2_single = self.encoder2_single(self.view2)
 
-        # z
+        # reshape
         self.z1 = tf.reshape(latent1, [batch_size, -1])
         self.z2 = tf.reshape(latent2, [batch_size, -1])
         z1 = self.z1
@@ -37,14 +39,15 @@ class MTV:
         z1_single = tf.reshape(latent1_single, [batch_size, -1])        
         z2_single = tf.reshape(latent2_single, [batch_size, -1])        
 
-        # C
+        # self-expressive layer
+        # common expressive
         self.Coef = tf.Variable(1.0e-8 * tf.ones([self.batch_size, self.batch_size], tf.float32), name = 'Coef')
-
+        # single expressive 
         self.Coef_1 = tf.Variable(1.0e-8 * tf.ones([self.batch_size, self.batch_size], tf.float32), name = 'Coef_1')
         self.Coef_2 = tf.Variable(1.0e-8 * tf.ones([self.batch_size, self.batch_size], tf.float32), name = 'Coef_2')
         
 
-        
+        # normalize        
         self.Coef = (self.Coef - tf.diag(tf.diag_part(self.Coef)))
 
         self.Coef_1 = (self.Coef_1 - tf.diag(tf.diag_part(self.Coef_1)))
@@ -65,7 +68,7 @@ class MTV:
         latent2_c_single = tf.reshape(z2_c_single, tf.shape(latent2_single))
 
         if self.ft:
-            # reconst
+            # reconst with self-expressive
             self.view1_r = self.decoder1(latent1_c)
             self.view2_r = self.decoder2(latent2_c)
 
@@ -73,7 +76,7 @@ class MTV:
             self.view2_r_single = self.decoder2_single(latent2_c_single)
             
         else:
-            # only reconst
+            # only reconst by autoencoder
             self.view1_r = self.decoder1(latent1)
             self.view2_r = self.decoder2(latent2)
 
@@ -83,28 +86,29 @@ class MTV:
         print(latent1.shape, self.view1_r.shape)
         print(latent2.shape, self.view2_r.shape)
 
-        # reconstruction loss 
+        # reconstruction loss  by Unet
         self.reconst_loss_1 = 0.5 * tf.reduce_sum(tf.pow(tf.subtract(self.view1_r, self.view1), 2.0))
         self.reconst_loss_2 = 0.5 * tf.reduce_sum(tf.pow(tf.subtract(self.view2_r, self.view2), 2.0))
 
+        # reconstruction loss by Dnet
         self.reconst_loss_1_single = 0.5 * tf.reduce_sum(tf.pow(tf.subtract(self.view1_r_single, self.view1), 2.0))
         self.reconst_loss_2_single = 0.5 * tf.reduce_sum(tf.pow(tf.subtract(self.view2_r_single, self.view2), 2.0))
 
 
         self.reconst_loss_single = self.reconst_loss_1_single + self.reconst_loss_2_single
         
-        # reconstruction loss all
+        # reconstruction loss all (Unet + Dnet)
         self.reconst_loss = self.reconst_loss_1 + self.reconst_loss_2
         self.reconst_loss += self.reconst_loss_single
 
-        # selfexpress loss
+        # self-expressive loss by Unet
         self.selfexpress_loss_1 = 0.5 * tf.reduce_sum(tf.pow(tf.subtract(z1_c, z1), 2.0))
         self.selfexpress_loss_2 = 0.5 * tf.reduce_sum(tf.pow(tf.subtract(z2_c, z2), 2.0))
-
+        # self-expressive loss by Dnet
         self.selfexpress_loss_1_single = 0.5 * tf.reduce_sum(tf.pow(tf.subtract(z1_c_single, z1_single), 2.0))
         self.selfexpress_loss_2_single = 0.5 * tf.reduce_sum(tf.pow(tf.subtract(z2_c_single, z2_single), 2.0))
         
-        # selfexpress all
+        # selfexpress all (Unet + Dnet)
         self.selfexpress_loss = self.selfexpress_loss_1 + self.selfexpress_loss_2
         self.selfexpress_loss_single = self.selfexpress_loss_1_single + self.selfexpress_loss_2_single
 
@@ -157,7 +161,6 @@ class MTV:
 
     def conv_block(self, inputs, out_channels, name='conv'):
         conv = tf.layers.conv2d(inputs, out_channels, kernel_size=3, strides=2, padding="same")
-        # conv = tf.contrib.layers.batch_norm(conv, decay=0.999, epsilon=1e-3, scale=True, center=True)
         conv = tf.nn.relu(conv)
         return conv
 
@@ -166,7 +169,6 @@ class MTV:
         deconv = tf.nn.relu(deconv)
         return deconv
 
-    # 4096
     def encoder1(self, x):
         net = self.conv_block(x,   64)
         net = self.conv_block(net, 64)
@@ -191,7 +193,6 @@ class MTV:
         net = self.deconv_block(net, 3)        
         return net
 
-    # 3304
     def encoder2(self, x):
         net = self.conv_block(x,   64)
         net = self.conv_block(net, 64)
