@@ -30,7 +30,7 @@ As different views share the same label space, the self-representation matrices 
 
 *  Test by Released Result:
 
-```python
+```bash
 python main.py --test
 ```
 
@@ -38,7 +38,7 @@ python main.py --test
 
 We have released the pretrain model in `/pretrain` folder, you can train it with finetune: 
 
-```python
+```bash
 python main.py --ft
 ```
 
