@@ -82,7 +82,7 @@ def main():
         epoch = 0 
         min_loss = 9970
         while epoch < args.pretrain:
-            loss = mtv.reconstruct(views[0], views[1], views[2], lr)
+            loss = mtv.reconstruct(views[0], views[1], lr)
             print("epoch: %.1d" % epoch, "loss: %.8f" % (loss/float(batch_size)))
             if loss/float(batch_size) < min_loss:
                 print('save model.')
