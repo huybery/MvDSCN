@@ -107,7 +107,7 @@ def main():
 
         Coef = thrC(Coef, alpha)                                  
         sio.savemat('./result/rgbd_coef.mat', dict([('coef', Coef)]))
-        y_x, L = post_proC(Coef, label_10_subjs.max(), 3, 1, 0)    
+        y_x, L = post_proC(Coef, label_10_subjs.max(), 3, 1)    
         missrate_x = err_rate(label_10_subjs, y_x)                
         acc_x = 1 - missrate_x
         nmi = normalized_mutual_info_score(label_10_subjs, y_x)
